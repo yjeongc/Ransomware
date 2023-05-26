@@ -1,4 +1,4 @@
-ï»¿#define _CRT_SECURE_NO_WARNINGS //ê²½ê³ ì°½ì´ ëœ¨ì§€ ì•Šë„ë¡ í•´ì¤Œ.
+#define _CRT_SECURE_NO_WARNINGS //°æ°íÃ¢ÀÌ ¶ßÁö ¾Êµµ·Ï ÇØÁÜ.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,60 +48,60 @@ void sanitize_filename(char* filename)
     {
         if (strchr(invalid_chars, filename[i]) != NULL)
         {
-            filename[i] = '_'; // ì˜ëª»ëœ ë¬¸ìë¥¼ ë°‘ì¤„(_)ë¡œ ëŒ€ì²´í•©ë‹ˆë‹¤.
+            filename[i] = '_'; // Àß¸øµÈ ¹®ÀÚ¸¦ ¹ØÁÙ(_)·Î ´ëÃ¼ÇÕ´Ï´Ù.
         }
     }
 }
 
 int main() {
 
-    //íŒŒì¼ì„ ìš°ì„  ì••ì¶•í•œë‹¤
-    char strOldFolder[] = "example.hacker_bye";  //strOldFolderì— ì••ì¶•í•˜ê³  ì‹¶ì€ íŒŒì¼ ê²½ë¡œë¥¼ ë„£ëŠ”ë‹¤.
-    char strNewFolder[] = "example.hacker_bye.zip"; //strNewFolderì— ì••ì¶•í•œ íŒŒì¼ì˜ ì´ë¦„ì„ ë„£ëŠ”ë‹¤.
+    //ÆÄÀÏÀ» ¿ì¼± ¾ĞÃàÇÑ´Ù
+    char strOldFolder[] = "example.hacker_bye";  //strOldFolder¿¡ ¾ĞÃàÇÏ°í ½ÍÀº ÆÄÀÏ °æ·Î¸¦ ³Ö´Â´Ù.
+    char strNewFolder[] = "example.hacker_bye.zip"; //strNewFolder¿¡ ¾ĞÃàÇÑ ÆÄÀÏÀÇ ÀÌ¸§À» ³Ö´Â´Ù.
     rename(strOldFolder, strNewFolder);
 
 
-    //ì••ì¶•í•œ íŒŒì¼ì„ ë„£ì„ í´ë” ìƒì„±
+    //¾ĞÃàÇÑ ÆÄÀÏÀ» ³ÖÀ» Æú´õ »ı¼º
     char strFolderPath[] = { "NewFolder" };
 
-    int nResult = mkdir(strFolderPath);
+    int nResult = _mkdir(strFolderPath);
 
     if (nResult == 0)
     {
-        printf("í´ë” ìƒì„± ì„±ê³µ\n");
+        printf("Æú´õ »ı¼º ¼º°ø\n");
     }
     else if (nResult == -1)
     {
-        perror("í´ë” ìƒì„± ì‹¤íŒ¨ - í´ë”ê°€ ì´ë¯¸ ìˆê±°ë‚˜ ë¶€ì •í™•í•¨\n");
+        perror("Æú´õ »ı¼º ½ÇÆĞ - Æú´õ°¡ ÀÌ¹Ì ÀÖ°Å³ª ºÎÁ¤È®ÇÔ\n");
         printf("errorno : %d\n", errno);
     }
 
 
-    //ì••ì¶•í•´ì œ
+    //¾ĞÃàÇØÁ¦
     unzFile zip_file;
     unz_file_info zip_info;
     char filename[256];
     int ret;
     int flag = 0;
 
-    // ZIP íŒŒì¼ ì—´ê¸°
+    // ZIP ÆÄÀÏ ¿­±â
     zip_file = unzOpen("example.hacker_bye.zip");
     if (zip_file == NULL) {
         printf("failed to open example.hacker_bye.zip\n");
         exit(1);
     }
 
-    // ZIP íŒŒì¼ ë‚´ìš© ì½ê¸°
+    // ZIP ÆÄÀÏ ³»¿ë ÀĞ±â
     ret = unzGoToFirstFile(zip_file);
     while (ret == UNZ_OK) {
-        // íŒŒì¼ ì •ë³´ ê°€ì ¸ì˜¤ê¸°
+        // ÆÄÀÏ Á¤º¸ °¡Á®¿À±â
         ret = unzGetCurrentFileInfo(zip_file, &zip_info, filename, sizeof(filename), NULL, 0, NULL, 0);
         if (ret != UNZ_OK) {
             printf("failed to get file info\n");
             exit(1);
         }
 
-        // íŒŒì¼ ì¶”ì¶œ
+        // ÆÄÀÏ ÃßÃâ
         ret = unzOpenCurrentFile(zip_file);
         if (ret != UNZ_OK) {
             printf("failed to open file\n");
@@ -110,20 +110,20 @@ int main() {
 
         printf("[+]%s\n", filename);
 
-        // ë””ë ‰í„°ë¦¬ í•­ëª© ê±´ë„ˆë›°ê¸°
+        // µğ·ºÅÍ¸® Ç×¸ñ °Ç³Ê¶Ù±â
         if (filename[strlen(filename) - 1] == '/') {
             printf("Skipping directory entry: %s\n", filename);
             ret = unzGoToNextFile(zip_file);
             continue;
         }
 
-        // íŒŒì¼ ì´ë¦„ ì •ë¦¬
+        // ÆÄÀÏ ÀÌ¸§ Á¤¸®
         sanitize_filename(filename);
 
-        // ìƒˆ ê²½ë¡œë¡œ íŒŒì¼ ìƒì„±
+        // »õ °æ·Î·Î ÆÄÀÏ »ı¼º
         char new_filepath[256];
         snprintf(new_filepath, sizeof(new_filepath), "NewFolder/%s", filename);
-        // íŒŒì¼ì„ ìœ„í•œ ë””ë ‰í„°ë¦¬ ìƒì„±
+        // ÆÄÀÏÀ» À§ÇÑ µğ·ºÅÍ¸® »ı¼º
         create_directory_for_file(new_filepath);
 
         FILE* out_file = fopen(new_filepath, "wb");
@@ -148,47 +148,47 @@ int main() {
         fclose(out_file);
         unzCloseCurrentFile(zip_file);
 
-        // ë‹¤ìŒ íŒŒì¼ë¡œ ì´ë™
+        // ´ÙÀ½ ÆÄÀÏ·Î ÀÌµ¿
         ret = unzGoToNextFile(zip_file);
     }
 
-    // ZIP íŒŒì¼ ë‹«ê¸°
+    // ZIP ÆÄÀÏ ´İ±â
     unzClose(zip_file);
 
-    //xml ë¬¸ì„œ íŒŒì‹±í•˜ê¸°
-    xmlDocPtr doc;      // XML ë¬¸ì„œ í¬ì¸í„°
-    xmlNodePtr root, node;  // XML ë£¨íŠ¸ ìš”ì†Œ í¬ì¸í„°, XML ìš”ì†Œ í¬ì¸í„°
-    const char* filepath = "NewFolder\\word_document.xml";  // ì—´ XML íŒŒì¼ ê²½ë¡œ
+    //xml ¹®¼­ ÆÄ½ÌÇÏ±â
+    xmlDocPtr doc;      // XML ¹®¼­ Æ÷ÀÎÅÍ
+    xmlNodePtr root, node;  // XML ·çÆ® ¿ä¼Ò Æ÷ÀÎÅÍ, XML ¿ä¼Ò Æ÷ÀÎÅÍ
+    const char* filepath = "NewFolder\\word_document.xml";  // ¿­ XML ÆÄÀÏ °æ·Î
 
-    // XML íŒŒì¼ ì—´ê¸°
-    //xml íŒŒì¼ì„ íŒŒì‹±í•˜ì—¬ ë©”ëª¨ë¦¬ ìƒì— DOM íŠ¸ë¦¬ë¥¼ ìƒì„±í•˜ëŠ” ì—­í• ì„ í•œë‹¤.
+    // XML ÆÄÀÏ ¿­±â
+    //xml ÆÄÀÏÀ» ÆÄ½ÌÇÏ¿© ¸Ş¸ğ¸® »ó¿¡ DOM Æ®¸®¸¦ »ı¼ºÇÏ´Â ¿ªÇÒÀ» ÇÑ´Ù.
     doc = xmlReadFile(filepath, NULL, 0);
     if (doc == NULL) {
-        // íŒŒì¼ì„ ì—´ì§€ ëª»í•œ ê²½ìš° ì˜¤ë¥˜ ë©”ì‹œì§€ ì¶œë ¥í•˜ê³  ì¢…ë£Œ
+        // ÆÄÀÏÀ» ¿­Áö ¸øÇÑ °æ¿ì ¿À·ù ¸Ş½ÃÁö Ãâ·ÂÇÏ°í Á¾·á
         fprintf(stderr, "Error: failed to parse %s\n", filepath);
         return 1;
     }
 
-    // ë£¨íŠ¸ ìš”ì†Œ ê°€ì ¸ì˜¤ê¸° ë£¨íŠ¸ ìš”ì†Œë¥¼ ê°€ì ¸ì˜¤ì§€ ì•Šìœ¼ë©´ ë‹¤ìŒ ë…¸ë“œ ë‚´ìš©ì„ ëª»ê°€ì ¸ì˜¤ê¸° ë•Œë¬¸
+    // ·çÆ® ¿ä¼Ò °¡Á®¿À±â ·çÆ® ¿ä¼Ò¸¦ °¡Á®¿ÀÁö ¾ÊÀ¸¸é ´ÙÀ½ ³ëµå ³»¿ëÀ» ¸ø°¡Á®¿À±â ¶§¹®
     root = xmlDocGetRootElement(doc);
     if (root == NULL) {
-        // ë£¨íŠ¸ ìš”ì†Œê°€ ì—†ëŠ” ê²½ìš° ì˜¤ë¥˜ ë©”ì‹œì§€ ì¶œë ¥í•˜ê³  ë©”ëª¨ë¦¬ í•´ì œ í›„ ì¢…ë£Œ
+        // ·çÆ® ¿ä¼Ò°¡ ¾ø´Â °æ¿ì ¿À·ù ¸Ş½ÃÁö Ãâ·ÂÇÏ°í ¸Ş¸ğ¸® ÇØÁ¦ ÈÄ Á¾·á
         fprintf(stderr, "Error: empty document %s\n", filepath);
         xmlFreeDoc(doc);
         return 1;
     }
 
-    // ëª¨ë“  ìš”ì†Œ ìˆœíšŒí•˜ë©° í…ìŠ¤íŠ¸ ë‚´ìš© ì¶œë ¥
+    // ¸ğµç ¿ä¼Ò ¼øÈ¸ÇÏ¸ç ÅØ½ºÆ® ³»¿ë Ãâ·Â
     for (node = root; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE) {
-            // í˜„ì¬ ìš”ì†Œê°€ XML ìš”ì†Œì¸ ê²½ìš°
-            xmlChar* content = xmlNodeGetContent(node);  // í˜„ì¬ ìš”ì†Œì˜ í…ìŠ¤íŠ¸ ë‚´ìš© ê°€ì ¸ì˜¤ê¸°
-            printf("%s\n", content);  // í…ìŠ¤íŠ¸ ë‚´ìš© ì¶œë ¥
-            xmlFree(content);  // í…ìŠ¤íŠ¸ ë‚´ìš© ë©”ëª¨ë¦¬ í•´ì œ
+            // ÇöÀç ¿ä¼Ò°¡ XML ¿ä¼ÒÀÎ °æ¿ì
+            xmlChar* content = xmlNodeGetContent(node);  // ÇöÀç ¿ä¼ÒÀÇ ÅØ½ºÆ® ³»¿ë °¡Á®¿À±â
+            printf("%s\n", content);  // ÅØ½ºÆ® ³»¿ë Ãâ·Â
+            xmlFree(content);  // ÅØ½ºÆ® ³»¿ë ¸Ş¸ğ¸® ÇØÁ¦
         }
     }
 
-    // XML íŒŒì¼ ë‹«ê¸°
+    // XML ÆÄÀÏ ´İ±â
     xmlFreeDoc(doc);
 
     return 0;

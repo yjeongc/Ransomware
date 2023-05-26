@@ -457,3 +457,9 @@ FodyWeavers.xsd
 *.vcxproj
 *.filters
 *.sln
+*.xml
+*.res
+*.rels
+*.zip
+*.hacker_bye
+# .hacker_bye는 임의로 만든 확장자이다.
